@@ -12,7 +12,7 @@ abstract class Serialization {
 	 * @returns {string}
 	 */
 	abstract serialization(value: CacheMessage): string;
-	
+
 	public serializationKey(value: string): string {
 		return value;
 	}
@@ -20,7 +20,7 @@ abstract class Serialization {
 
 abstract class Deserialization {
 	abstract deserialization(value: string): CacheMessage;
-	
+
 	public deserializationKey(value: string): string {
 		return value;
 	}

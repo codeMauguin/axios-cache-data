@@ -1,31 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "strict": true,
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "sourceMap": false,
-    "baseUrl": ".",
-    "outDir": "./lib/",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "strictPropertyInitialization": false,
-    "emitDecoratorMetadata": true,
-    "declaration": true
-  },
-  "include": [
-    "src/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"strict": true,
+		"importHelpers": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"experimentalDecorators": true,
+		"sourceMap": false,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"outDir": "./lib/",
+		"lib": ["ESNext", "DOM"],
+		"noImplicitAny": false,
+		"skipLibCheck": true,
+		"strictPropertyInitialization": false,
+		"emitDecoratorMetadata": true,
+		"declaration": true
+	},
+	"include": ["src/*", "src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }

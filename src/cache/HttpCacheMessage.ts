@@ -1,6 +1,6 @@
 /** @format */
 
-import { CacheMessage, Deserialization, Serialization } from "src/HttpMessage";
+import { CacheMessage, Deserialization, Serialization } from "@/cache/HttpMessage";
 
 export class SerializationMessageImpl extends Serialization {
 	public serialization(value: CacheMessage): string {

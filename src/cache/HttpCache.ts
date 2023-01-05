@@ -1,6 +1,6 @@
 /** @format */
 
-import { CacheMessage, Deserialization, Serialization } from "src/HttpMessage";
+import { CacheMessage, Deserialization, Serialization } from "@/cache";
 
 export abstract class HttpCacheLike {
 	protected storage: Storage;
@@ -9,7 +9,7 @@ export abstract class HttpCacheLike {
 		serialization: Serialization;
 		deserialization: Deserialization;
 	};
-	
+
 	protected constructor(
 		storage: Storage,
 		message: { serialization: Serialization; deserialization: Deserialization },
@@ -19,11 +19,11 @@ export abstract class HttpCacheLike {
 		this.message = message;
 		this.prefix = prefix;
 	}
-	
+
 	abstract get(key: string, timeout: number): unknown | null;
-	
+
 	abstract set(requestKey: string, axiosPromise: unknown): void;
-	
+
 	abstract clear(key?: string): void;
 }
 
@@ -31,7 +31,7 @@ export class HttpCache extends HttpCacheLike {
 	constructor(storage: Storage, message: { serialization: Serialization; deserialization: Deserialization }, prefix) {
 		super(storage, message, prefix);
 	}
-	
+
 	/**
 	 * 是否过期
 	 * @param {number} expired 过期时间
@@ -43,7 +43,7 @@ export class HttpCache extends HttpCacheLike {
 	private static isExpired(expired: number, oldTime: number): boolean {
 		return new Date().getTime() >= oldTime + expired;
 	}
-	
+
 	public get(key: string, timeout: number): any | null {
 		const s: string = this.message.serialization.serializationKey(`${this.prefix}:${key}`);
 		const item: string | null = this.storage.getItem(s);
@@ -53,19 +53,19 @@ export class HttpCache extends HttpCacheLike {
 			this.storage.removeItem(s);
 			return null;
 		}
-		return message.value;
+		return message.value ?? null;
 	}
-	
+
 	public set(key: string, axiosPromise: object): void {
 		this.storage.setItem(
 			this.message.serialization.serializationKey(`${this.prefix}:${key}`),
 			this.message.serialization.serialization({
-				                                         value: axiosPromise,
-				                                         expire: new Date().getTime()
-			                                         })
+				value: axiosPromise,
+				expire: new Date().getTime()
+			})
 		);
 	}
-	
+
 	/**
 	 * 删除key
 	 * @param {string} key 存在则删除 不存在则删除所有 包含key 的
