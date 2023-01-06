@@ -38,12 +38,13 @@ http(/*全局配置*/)/*返回一个被代理axios的实例*/
 ## 2. 强制更新或使用缓存
 
 ```typescript
-import axios             from "axios";
-import { createOptions } from "src/CacheInterceptor";
+import { http } from "lib/index";
 
+const axiosInstance=http.proxy(/*你的axios对象*/,/*配置*/)/*返回一个被代理axios的实例*/
+const axiosInstance=http(/*全局配置*/)/*返回一个被代理axios的实例*/
 axiosInstance.post(url, {}, { force: true }); //缓存会失效 并且删除缓存 重新走网络请求
 axiosInstance.post(url, {}, { hit: true }); //在没有全局开启缓存这个会开启缓存
-
+axiosInstance.clear()//
 const op = createOptions({});
 op.cache.clear(); //从op中获取cache clear只会清除有网络缓存有关的key
 
