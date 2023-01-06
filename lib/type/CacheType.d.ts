@@ -1,5 +1,4 @@
 /** @format */
-
 import { Deserialization, Serialization } from "@/cache";
 import { Method } from "@/type/Method";
 import { AxiosResponse } from "axios";
@@ -19,15 +18,12 @@ interface CacheInstance {
 	readonly maxAge?: number;
 	readonly key?: string;
 	readonly storage?: Storage;
-
 	readonly proxy?: Method[];
 	readonly enableCache?: boolean | ((url: string, method: string) => boolean);
-
 	/**
 	 * 公共的key前缀 生成key需要获取到
 	 */
 	readonly prefix?: string;
-
 	/**
 	 * 消息转换
 	 */

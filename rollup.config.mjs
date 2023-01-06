@@ -5,8 +5,9 @@ import resolve from "@rollup/plugin-node-resolve";
 import filesize from "rollup-plugin-filesize";
 import dts from "rollup-plugin-dts";
 import { defineConfig } from "rollup";
-import { terser } from "rollup-plugin-terser";
 import clear from "rollup-plugin-clear";
+import { terser } from "rollup-plugin-terser";
+
 export default defineConfig([
 	{
 		input: "src/index.ts",
@@ -14,10 +15,11 @@ export default defineConfig([
 			{
 				file: "lib/index.min.js",
 				name: "axios-cache-data",
-				format: "esm"
+				format: "es"
 			}
 		],
 		external: ["axios"],
+		strictDeprecations: true,
 		plugins: [
 			resolve(),
 			typescript(),
@@ -33,7 +35,7 @@ export default defineConfig([
 		input: "src/index.ts",
 		plugins: [dts()],
 		output: {
-			format: "esm",
+			format: "es",
 			file: "lib/index.d.ts"
 		}
 	}

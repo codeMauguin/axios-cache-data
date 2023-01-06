@@ -4,22 +4,15 @@ import { getResponse } from "@/util";
 import { AxiosInstance } from "axios";
 
 interface CacheProxy<T extends object> {
-	(
-		target: AxiosInstance,
-		key: string,
-		receiver: any,
-		options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
-	): ProxyHandler<T>;
+	(method: string, options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }): ProxyHandler<T>;
 }
 
-const ThreeProxy: CacheProxy<AxiosInstance> = function (
-	target: AxiosInstance,
-	key: string,
-	receiver: any,
+const ThreeProxy: CacheProxy<any> = function (
+	method: string,
 	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
 ): ProxyHandler<AxiosInstance> {
 	return {
-		apply(target: AxiosInstance, thisArg: any, argArray: any[]): any {
+		apply(target: any, thisArg: any, argArray: any[]): any {
 			const requestOption = {
 				hit: argArray[2]?.hit,
 				force: argArray[2]?.force,
@@ -30,33 +23,22 @@ const ThreeProxy: CacheProxy<AxiosInstance> = function (
 			const generateKey = options.generateKey(
 				options.key,
 				argArray[0],
-				key,
+				method,
 				argArray[2]?.header ?? null,
 				argArray[2]?.params ?? null,
 				argArray[1] ?? null
 			);
-			return getResponse(
-				options,
-				url,
-				key,
-				requestOption,
-				target,
-				thisArg,
-				argArray,
-				generateKey
-			);
+			return getResponse(options, url, method, requestOption, target, thisArg, argArray, generateKey);
 		}
 	};
 };
 
-const TwoProxy: CacheProxy<AxiosInstance> = function (
-	target: AxiosInstance,
+const TwoProxy: CacheProxy<any> = function (
 	key: string,
-	receiver: any,
 	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
-): ProxyHandler<AxiosInstance> {
+): ProxyHandler<any> {
 	return {
-		apply(target: AxiosInstance, thisArg: any, argArray: any[]): any {
+		apply(target: any, thisArg: any, argArray: any[]): any {
 			const requestOption = {
 				hit: argArray[1]?.hit,
 				force: argArray[1]?.force,
@@ -72,28 +54,17 @@ const TwoProxy: CacheProxy<AxiosInstance> = function (
 				argArray[1]?.params ?? null,
 				argArray[1]?.data ?? null
 			);
-			return getResponse(
-				options,
-				url,
-				key,
-				requestOption,
-				target,
-				thisArg,
-				argArray,
-				generateKey
-			);
+			return getResponse(options, url, key, requestOption, target, thisArg, argArray, generateKey);
 		}
 	};
 };
 
-const OneProxy: CacheProxy<AxiosInstance> = function (
-	target: AxiosInstance,
+const OneProxy: CacheProxy<any> = function (
 	key: string,
-	receiver: any,
 	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
-): ProxyHandler<AxiosInstance> {
+): ProxyHandler<any> {
 	return {
-		apply(target: AxiosInstance, thisArg: any, argArray: any[]): any {
+		apply(target: any, thisArg: any, argArray: any[]): any {
 			const requestOption: RequestOption = {
 				hit: argArray[0]?.hit,
 				force: argArray[0]?.force,
@@ -110,16 +81,7 @@ const OneProxy: CacheProxy<AxiosInstance> = function (
 				argArray[0]?.params ?? null,
 				argArray[0]?.data ?? null
 			);
-			return getResponse(
-				options,
-				url,
-				method,
-				requestOption,
-				target,
-				thisArg,
-				argArray,
-				generateKey
-			);
+			return getResponse(options, url, method, requestOption, target, thisArg, argArray, generateKey);
 		}
 	};
 };
