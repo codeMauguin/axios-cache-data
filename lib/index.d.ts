@@ -115,11 +115,15 @@ declare abstract class Cache {
 }
 
 declare class CacheAxios extends Cache {
+	private beforeConfig;
+
 	constructor(options?: CacheInstance);
 
 	static create(options?: CacheInstance): CacheAxios;
 
 	request<T = any, R = AxiosResponse$1<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
+
+	clear(config?: AxiosRequestConfig<any> | undefined): void;
 
 	getUri(config: AxiosResponse$1<any>): Promise<AxiosResponse$1<any, any>>;
 
@@ -154,8 +158,6 @@ declare class CacheAxios extends Cache {
 		data?: D,
 		config?: AxiosRequestConfig<D>
 	): Promise<R>;
-
-	beforeConfig<D = any>(config: AxiosRequestConfig, url?: string, method?: string, data?: D): AxiosRequestConfig;
 }
 
 export { CacheInstance, Method, RequestOption, CacheAxios as default, http, proxy };

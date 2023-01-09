@@ -1,7 +1,7 @@
 import { HttpCache } from "@/cache";
 import { CacheInstance, Method, RequestOption } from "@/type";
 import { createOptions, extend } from "@/util";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 type ProxyMethod = {
 	[key in Method]: boolean;
@@ -43,11 +43,7 @@ abstract class Cache {
 
 	protected constructor(options: CacheInstance) {
 		this.defaultOptions = Object.assign(createOptions(options), {
-			adapter: options.adapter
-				? !Array.isArray(options.adapter)
-					? [options.adapter]
-					: options.adapter
-				: [(c: AxiosRequestConfig) => axios.request(c)]
+			adapter: options.adapter ? (!Array.isArray(options.adapter) ? [options.adapter] : options.adapter) : []
 		});
 		this.cache = new HttpCache(
 			this.defaultOptions.storage,
@@ -92,7 +88,7 @@ abstract class Cache {
 	}
 
 	private proxyRequest<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig, key: string): Promise<R> {
-		let promise;
+		let promise: Promise<any>;
 		if ((promise = this.cache.get(key, config.expire ?? this.defaultOptions.maxAge))) {
 			return isPromise(promise) ? promise : Promise.resolve(promise);
 		} else {
@@ -100,7 +96,7 @@ abstract class Cache {
 		}
 	}
 
-	private beforeStore<D = any>(config: AxiosRequestConfig): boolean {
+	private beforeStore(config: AxiosRequestConfig): boolean {
 		return (
 			!this.proxyMethod[config.method as string] ||
 			config.hit === false ||
@@ -111,12 +107,12 @@ abstract class Cache {
 	private key<D = any>(config?: AxiosRequestConfig<D>): string | null {
 		return config
 			? this.defaultOptions.generateKey(
-				this.defaultOptions.key,
-				config.url,
-				config.method,
-				config.headers,
-				config.params,
-				config.data
+					this.defaultOptions.key,
+					config.url,
+					config.method,
+					config.headers,
+					config.params,
+					config.data
 			  )
 			: null;
 	}
@@ -134,6 +130,10 @@ class CacheAxios extends Cache {
 	public request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R> {
 		config.method = config.method ?? "get";
 		return super.request(config);
+	}
+
+	public clear(config?: AxiosRequestConfig<any> | undefined): void {
+		super.clear(config);
 	}
 
 	public getUri(config: AxiosResponse<any>) {
@@ -207,7 +207,7 @@ class CacheAxios extends Cache {
 		return this.request<T, R, D>(this.beforeConfig(config, url, "patchForm", data));
 	}
 
-	public beforeConfig<D = any>(
+	private beforeConfig<D = any>(
 		config: AxiosRequestConfig,
 		url?: string,
 		method?: string,

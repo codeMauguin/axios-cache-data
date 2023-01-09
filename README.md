@@ -2,8 +2,7 @@
 
 # axios-cache-data
 
-![axios-data](https://badgen.net/badge/axios-cache-data/1.20.3-beta-4/blue?icon=github) ![axios](https://badgen.
-net/badge/axios/^1.2.2/green?icon=github) ![vite](https://badgen.net/badge/vite/^4.0.3/blue?icon=github)
+![axios-data](https://badgen.net/badge/axios-cache-data/1.20.3-beta-5/blue?icon=github) ![axios](https://badgen.net/badge/axios/^1.2.2/green?icon=github) ![vite](https://badgen.net/badge/vite/^4.0.3/blue?icon=github)
 
 > `axios`官方文档在这 [axios](https://axios-http.com/)
 
@@ -15,17 +14,44 @@ net/badge/axios/^1.2.2/green?icon=github) ![vite](https://badgen.net/badge/vite/
 <!-- TOC -->
 
 - [axios-cache-data](#axios-cache-data)
-    - [1. 创建缓存实例](#1-%E5%88%9B%E5%BB%BA%E7%BC%93%E5%AD%98%E5%AE%9E%E4%BE%8B)
-    - [2. 强制更新或使用缓存](#2-%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0%E6%88%96%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98)
-        - [2.1. 序列化数据](#21-%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE)
-    - [3. 参数说明](#3-%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E)
-        - [3.1. 创建适配器的公共参数](#31-%E5%88%9B%E5%BB%BA%E9%80%82%E9%85%8D%E5%99%A8%E7%9A%84%E5%85%AC%E5%85%B1%E5%8F%82%E6%95%B0)
-        - [3.2. 每一个请求缓存参数](#32-%E6%AF%8F%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0)
-    - [4. 执行流程图](#4-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE)
+    - [1. 创建缓存类](#1-%E5%88%9B%E5%BB%BA%E7%BC%93%E5%AD%98%E7%B1%BB)
+    - [2. 或者创建缓存实例](#2-%E6%88%96%E8%80%85%E5%88%9B%E5%BB%BA%E7%BC%93%E5%AD%98%E5%AE%9E%E4%BE%8B)
+    - [3. 强制更新或使用缓存](#3-%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0%E6%88%96%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98)
+        - [3.1. 序列化数据](#31-%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE)
+    - [4. 参数说明](#4-%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E)
+        - [4.1. 创建适配器的公共参数](#41-%E5%88%9B%E5%BB%BA%E9%80%82%E9%85%8D%E5%99%A8%E7%9A%84%E5%85%AC%E5%85%B1%E5%8F%82%E6%95%B0)
+        - [4.2. 每一个请求缓存参数](#42-%E6%AF%8F%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0)
+    - [5. 执行流程图](#5-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE)
 
 <!-- /TOC -->
 
-## 1. 创建缓存实例
+## 1. 创建缓存类
+
+```typescript
+/**
+ * 自己提供网络适配器进行请求
+ */
+const config: AxiosRequestConfig = {
+		baseURL: "xxx"
+	};
+//对自己网络请求定制
+const instance: AxiosInstance = axios.create(config);
+/**
+ * 缓存客户端
+ */
+const cacheInstance: CacheAxios = CacheAxios.create({
+	                                                    adapter: (con) => instance.request(con),
+	                                                    maxAge: 1000 * 60 * 30,
+	                                                    valid(response: AxiosResponse): boolean {
+		                                                    return response.status === 200 && response.data.code === 200;
+	                                                    }
+	                                                    cacheInstance.clear();//清除所有的缓存
+	                                                    cacheInstance.clear(config)//某个指定的缓存 注意和你请求的配置要一样
+
+                                                    });
+```
+
+## 2. 或者创建缓存实例
 
 ```typescript
 import { http } from "lib/index";
@@ -35,7 +61,7 @@ const axiosInstance = http(/*全局配置*/)/*返回一个被代理axios的实�
 //...
 ```
 
-## 2. 强制更新或使用缓存
+## 3. 强制更新或使用缓存
 
 ```typescript
 import { http } from "lib/index";
@@ -50,7 +76,7 @@ const instance = axios.withCache(options); //使用代理对象时会代理clear
 instance.clear();
 ```
 
-### 2.1. 序列化数据
+### 3.1. 序列化数据
 
 ```typescript
 import axios    from "axios";
@@ -63,7 +89,7 @@ http({
      });
 ```
 
-## 3. 参数说明
+## 4. 参数说明
 
 ```typescript
 export interface CacheInstance extends AxiosRequestConfig {
@@ -116,7 +142,7 @@ axiosInstance.get(url, {
 
 ---
 
-### 3.1. 创建适配器的公共参数
+### 4.1. 创建适配器的公共参数
 
 |     参数      |                    介绍                    | 默认值                       |
 |:-----------:|:----------------------------------------:|---------------------------|
@@ -130,7 +156,7 @@ axiosInstance.get(url, {
 |    valid    |            验证消息是否正确防止消息错误却被缓存            |                           |
 |    proxy    | 指定缓存方法`request` `get` `post` `delete`... | ["get","post"]            |
 
-### 3.2. 每一个请求缓存参数
+### 4.2. 每一个请求缓存参数
 
 |  hit   |   是否需要命中缓存(优先级高于全局配置)   |
 |:------:|:-----------------------:|
@@ -140,6 +166,6 @@ axiosInstance.get(url, {
 
 > hit false 全局开启缓存也不会命中缓存
 
-## 4. 执行流程图
+## 5. 执行流程图
 
 ![](流程图.png)

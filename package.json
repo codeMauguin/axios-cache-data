@@ -1,6 +1,6 @@
 {
   "name": "axios-cache-data",
-  "version": "1.20.3-beta-4",
+  "version": "1.20.3-beta-5",
   "type": "module",
   "description": "自定义缓存数据，接口数据不会经常变化，请求本地化缓存减少服务器压力",
   "main": "./lib/index.min.js",
@@ -10,13 +10,11 @@
     "dev": "tsc",
     "serve": "rollup -c",
     "publish": "npm publish",
-    "beta": "npm publish --tag beta && npm stop",
+    "beta": "npm publish --tag beta",
     "eslint": "eslint ./src"
   },
-  "peerDependencies": {
-    "axios": "^1.2.2"
-  },
   "devDependencies": {
+    "axios": "^1.2.2",
     "@rollup/plugin-node-resolve": "^ 15.0.1",
     "@rollup/plugin-typescript": "^  10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
@@ -28,7 +26,8 @@
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.4.1",
     "typescript": "~4.9.4",
-    "vite": "^4.0.3"
+    "vite": "^4.0.3",
+    "rollup-plugin-clear": "^2.0.7"
   },
   "keywords": [
     "axios",
@@ -44,8 +43,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/codeMauguin/axios-cache-data.git"
-  },
-  "dependencies": {
-    "rollup-plugin-clear": "^2.0.7"
   }
 }
