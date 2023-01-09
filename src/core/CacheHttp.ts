@@ -1,4 +1,4 @@
-import { HttpCache } from "@/cache/HttpCache";
+import { HttpCache } from "@/cache";
 import { OneProxy, TwoProxy } from "@/core/Proxy";
 import { CacheInstance, Method, RequestExecute } from "@/type";
 import { createOptions, createProxyMethods } from "@/util";
@@ -28,7 +28,12 @@ function http(config: CreateAxiosDefaults, options: CacheInstance = {}): AxiosIn
 }
 
 function proxy(instance: AxiosInstance, options: CacheInstance = {}): AxiosInstance {
-	const defaultOptions: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache } = createOptions(options);
+	let defaultOptions: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache } = Object.assign(
+		createOptions(options)
+	);
+	defaultOptions = Object.assign(defaultOptions, {
+		cache: new HttpCache(defaultOptions.storage, defaultOptions.message, defaultOptions.prefix)
+	});
 	//创建代理函数
 	const proxyMethods: Record<Method, RequestExecute> = createProxyMethods(
 		instance,

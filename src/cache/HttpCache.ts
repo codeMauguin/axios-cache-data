@@ -70,7 +70,7 @@ export class HttpCache extends HttpCacheLike {
 	 * 删除key
 	 * @param {string} key 存在则删除 不存在则删除所有 包含key 的
 	 */
-	public clear(key?: string) {
+	public clear(key?: string | null) {
 		if (key) {
 			this.storage.removeItem(this.message.serialization.serializationKey(`${this.prefix}:${key}`));
 		} else {

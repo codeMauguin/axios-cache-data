@@ -1,5 +1,4 @@
 import { HttpCache } from "@/cache";
-import { CacheAdapter } from "@/core";
 import { CacheInstance, RequestOption } from "@/type";
 import { extend } from "@/util/util";
 import { AxiosInstance } from "axios";
@@ -8,14 +7,14 @@ function afterProxy(
 	response: any,
 	key: string,
 	config: RequestOption,
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): any {
 	if ((config.valid && config.valid(response)) || options.valid(response)) options.cache.set(key, response);
 	return response;
 }
 
 function getResponse(
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache },
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache },
 	url: string,
 	method: string,
 	requestOption: RequestOption,
@@ -33,7 +32,7 @@ function getResponse(
 			afterProxy(resp, generateKey, requestOption, options)
 		);
 	}
-	const response = CacheAdapter(generateKey, requestOption, options, options.cache);
+	const response = options.cache.get(generateKey, requestOption.expire ?? options.maxAge);
 	if (response === null) {
 		return Promise.resolve(Reflect.apply(target, thisArg, argArray)).then((resp) =>
 			afterProxy(resp, generateKey, requestOption, options)

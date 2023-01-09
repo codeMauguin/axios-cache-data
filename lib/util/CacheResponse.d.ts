@@ -3,7 +3,7 @@ import { CacheInstance, RequestOption } from "@/type";
 import { AxiosInstance } from "axios";
 
 declare function getResponse(
-	options: Omit<Required<CacheInstance>, "prefix"> & {
+	options: Omit<Required<CacheInstance>, "adapter"> & {
 		cache: HttpCache;
 	},
 	url: string,

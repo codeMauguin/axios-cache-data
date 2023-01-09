@@ -11,13 +11,13 @@ declare abstract class Serialization {
 	 * @returns {string}
 	 */
 	abstract serialization(value: CacheMessage): string;
-	
+
 	serializationKey(value: string): string;
 }
 
 declare abstract class Deserialization {
 	abstract deserialization(value: string): CacheMessage;
-	
+
 	deserializationKey(value: string): string;
 }
 

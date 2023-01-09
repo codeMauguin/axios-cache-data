@@ -4,7 +4,7 @@ import { CacheInstance } from "@/type";
 interface CacheProxy<T extends object> {
 	(
 		method: string,
-		options: Omit<Required<CacheInstance>, "prefix"> & {
+		options: Omit<Required<CacheInstance>, "adapter"> & {
 			cache: HttpCache;
 		}
 	): ProxyHandler<T>;

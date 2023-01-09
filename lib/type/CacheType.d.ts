@@ -1,6 +1,6 @@
 /** @format */
 import { Deserialization, Serialization } from "@/cache";
-import { Method } from "@/type/Method";
+import { Adapter, Method } from "@/type";
 import { AxiosResponse } from "axios";
 
 interface RequestOption {
@@ -19,6 +19,7 @@ interface CacheInstance {
 	readonly key?: string;
 	readonly storage?: Storage;
 	readonly proxy?: Method[];
+	readonly adapter?: Adapter | Adapter[];
 	readonly enableCache?: boolean | ((url: string, method: string) => boolean);
 	/**
 	 * 公共的key前缀 生成key需要获取到
@@ -40,7 +41,7 @@ interface CacheInstance {
 		method: unknown,
 		header: unknown,
 		params: string,
-		data: string | object
+		data: string | object | any
 	): string;
 }
 

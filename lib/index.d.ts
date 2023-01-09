@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosResponse as AxiosResponse$1, CreateAxiosDefaults } from "axios";
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse as AxiosResponse$1, CreateAxiosDefaults } from "axios";
 
 /** @format */
 type CacheMessage = {
@@ -23,8 +23,6 @@ declare abstract class Deserialization {
 	deserializationKey(value: string): string;
 }
 
-type Method = "request" | "get" | "delete" | "head" | "options" | "post" | "put" | "patch" | "clear";
-
 /** @format */
 
 interface RequestOption {
@@ -43,6 +41,7 @@ interface CacheInstance {
 	readonly key?: string;
 	readonly storage?: Storage;
 	readonly proxy?: Method[];
+	readonly adapter?: Adapter | Adapter[];
 	readonly enableCache?: boolean | ((url: string, method: string) => boolean);
 	/**
 	 * 公共的key前缀 生成key需要获取到
@@ -64,9 +63,13 @@ interface CacheInstance {
 		method: unknown,
 		header: unknown,
 		params: string,
-		data: string | object
+		data: string | object | any
 	): string;
 }
+
+type Method = "request" | "get" | "delete" | "head" | "options" | "post" | "put" | "patch" | "clear";
+
+type Adapter = (config: AxiosRequestConfig) => Promise<any>;
 
 declare module "axios" {
 	interface AxiosStatic {
@@ -94,4 +97,65 @@ declare namespace http {
 
 declare function proxy(instance: AxiosInstance, options?: CacheInstance): AxiosInstance;
 
-export { CacheInstance, Method, RequestOption, http, proxy };
+declare abstract class Cache {
+	protected readonly defaultOptions: Required<CacheInstance>;
+	private readonly cache;
+	private proxyMethod;
+	private getOnfulfilled;
+	private realRequest;
+	private proxyRequest;
+	private beforeStore;
+	private key;
+
+	protected constructor(options: CacheInstance);
+
+	request<T = any, R = AxiosResponse$1<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
+
+	clear(config?: AxiosRequestConfig): void;
+}
+
+declare class CacheAxios extends Cache {
+	constructor(options?: CacheInstance);
+
+	static create(options?: CacheInstance): CacheAxios;
+
+	request<T = any, R = AxiosResponse$1<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
+
+	getUri(config: AxiosResponse$1<any>): Promise<AxiosResponse$1<any, any>>;
+
+	get<T = any, R = AxiosResponse$1<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	delete<T = any, R = AxiosResponse$1<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	head<T = any, R = AxiosResponse$1<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	options<T = any, R = AxiosResponse$1<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	post<T = any, R = AxiosResponse$1<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	put<T = any, R = AxiosResponse$1<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	patch<T = any, R = AxiosResponse$1<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
+
+	postForm<T = any, R = AxiosResponse$1<T>, D = any>(
+		url: string,
+		data?: D,
+		config?: AxiosRequestConfig<D>
+	): Promise<R>;
+
+	putForm<T = any, R = AxiosResponse$1<T>, D = any>(
+		url: string,
+		data?: D,
+		config?: AxiosRequestConfig<D>
+	): Promise<R>;
+
+	patchForm<T = any, R = AxiosResponse$1<T>, D = any>(
+		url: string,
+		data?: D,
+		config?: AxiosRequestConfig<D>
+	): Promise<R>;
+
+	beforeConfig<D = any>(config: AxiosRequestConfig, url?: string, method?: string, data?: D): AxiosRequestConfig;
+}
+
+export { CacheInstance, Method, RequestOption, CacheAxios as default, http, proxy };

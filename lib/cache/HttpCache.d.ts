@@ -53,5 +53,5 @@ export declare class HttpCache extends HttpCacheLike {
 	 * 删除key
 	 * @param {string} key 存在则删除 不存在则删除所有 包含key 的
 	 */
-	clear(key?: string): void;
+	clear(key?: string | null): void;
 }

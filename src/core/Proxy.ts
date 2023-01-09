@@ -4,12 +4,12 @@ import { getResponse } from "@/util";
 import { AxiosInstance } from "axios";
 
 interface CacheProxy<T extends object> {
-	(method: string, options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }): ProxyHandler<T>;
+	(method: string, options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }): ProxyHandler<T>;
 }
 
 const ThreeProxy: CacheProxy<any> = function (
 	method: string,
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): ProxyHandler<AxiosInstance> {
 	return {
 		apply(target: any, thisArg: any, argArray: any[]): any {
@@ -35,7 +35,7 @@ const ThreeProxy: CacheProxy<any> = function (
 
 const TwoProxy: CacheProxy<any> = function (
 	key: string,
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): ProxyHandler<any> {
 	return {
 		apply(target: any, thisArg: any, argArray: any[]): any {
@@ -61,7 +61,7 @@ const TwoProxy: CacheProxy<any> = function (
 
 const OneProxy: CacheProxy<any> = function (
 	key: string,
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): ProxyHandler<any> {
 	return {
 		apply(target: any, thisArg: any, argArray: any[]): any {

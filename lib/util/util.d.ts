@@ -15,14 +15,12 @@ declare function defaultGenerateKey(
 declare function createProxyMethods(
 	target: AxiosInstance,
 	methods: Method[],
-	options: Omit<Required<CacheInstance>, "prefix"> & {
+	options: Omit<Required<CacheInstance>, "adapter"> & {
 		cache: HttpCache;
 	}
 ): Record<Method, RequestExecute>;
 
-declare function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "prefix"> & {
-	cache: HttpCache;
-};
+declare function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "adapter">;
 
 /**
  * 对参数可能是函数的类型执行

@@ -25,7 +25,7 @@ function defaultGenerateKey(
 function createProxyMethods(
 	target: AxiosInstance,
 	methods: Method[],
-	options: Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache }
+	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): Record<Method, RequestExecute> {
 	const record: Record<string, RequestExecute> = {};
 	for (let i = 0; i < methods.length; ++i) {
@@ -58,7 +58,7 @@ function createProxyMethods(
 	return record;
 }
 
-function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "prefix"> & { cache: HttpCache } {
+function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "adapter"> {
 	const {
 		maxAge = 1000 * 60 * 60,
 		key = "HTTP_CACHE_CACHE",
@@ -73,7 +73,7 @@ function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "p
 		},
 		proxy = DEFAULT_METHOD
 	} = options;
-	const cache: HttpCache = new HttpCache(storage, message, prefix);
+
 	return {
 		maxAge,
 		key,
@@ -82,8 +82,8 @@ function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "p
 		generateKey,
 		valid,
 		message,
-		cache,
-		proxy
+		proxy,
+		prefix
 	};
 }
 

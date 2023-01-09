@@ -1,7 +1,7 @@
 /** @format */
 
 import { Deserialization, Serialization } from "@/cache";
-import { Method } from "@/type/Method";
+import { Adapter, Method } from "@/type";
 import { AxiosResponse } from "axios";
 
 interface RequestOption {
@@ -21,6 +21,8 @@ interface CacheInstance {
 	readonly storage?: Storage;
 
 	readonly proxy?: Method[];
+
+	readonly adapter?: Adapter | Adapter[];
 	readonly enableCache?: boolean | ((url: string, method: string) => boolean);
 
 	/**
@@ -44,7 +46,7 @@ interface CacheInstance {
 		method: unknown,
 		header: unknown,
 		params: string,
-		data: string | object
+		data: string | object | any
 	): string;
 }
 
