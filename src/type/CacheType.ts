@@ -9,6 +9,8 @@ interface RequestOption {
 	readonly force?: boolean;
 	readonly expire?: number;
 
+	readonly group?: string | number;
+
 	valid?(response: AxiosResponse): boolean;
 }
 
@@ -42,6 +44,7 @@ interface CacheInstance {
 
 	generateKey?(
 		key: string | undefined,
+		group: string | number,
 		url: string | undefined,
 		method: unknown,
 		header: unknown,

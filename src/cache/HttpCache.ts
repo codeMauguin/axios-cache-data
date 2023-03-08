@@ -1,7 +1,9 @@
 /** @format */
 
 import { CacheMessage, Deserialization, Serialization } from "@/cache";
-
+function isNull(target: any): boolean {
+	return Object.is(target, void 0) || Object.is(target, null);
+}
 export abstract class HttpCacheLike {
 	protected storage: Storage;
 	protected readonly prefix: string;
@@ -13,7 +15,7 @@ export abstract class HttpCacheLike {
 	protected constructor(
 		storage: Storage,
 		message: { serialization: Serialization; deserialization: Deserialization },
-		prefix
+		prefix: string
 	) {
 		this.storage = storage;
 		this.message = message;
@@ -25,6 +27,8 @@ export abstract class HttpCacheLike {
 	abstract set(requestKey: string, axiosPromise: unknown): void;
 
 	abstract clear(key?: string): void;
+
+	abstract clear(key: string, group: string | number): void;
 }
 
 export class HttpCache extends HttpCacheLike {
@@ -70,10 +74,10 @@ export class HttpCache extends HttpCacheLike {
 	 * 删除key
 	 * @param {string} key 存在则删除 不存在则删除所有 包含key 的
 	 */
-	public clear(key?: string | null) {
-		if (key) {
-			this.storage.removeItem(this.message.serialization.serializationKey(`${this.prefix}:${key}`));
-		} else {
+	public clear(key?: string | null, group?: string | number): void {
+		const isKeyNUll: boolean = isNull(key);
+		const isGroupNULL: boolean = isNull(group);
+		if (isKeyNUll && isGroupNULL) {
 			for (let i = 0; i < this.storage.length; ++i) {
 				const s: string | null = this.storage.key(i);
 				if (s === null) continue;
@@ -82,6 +86,26 @@ export class HttpCache extends HttpCacheLike {
 					this.storage.removeItem(s);
 				}
 			}
+		} else if (isGroupNULL) {
+			for (let i = 0; i < this.storage.length; ++i) {
+				const s: string | null = this.storage.key(i);
+				if (s === null) continue;
+				const deserializationKey: string = this.message.deserialization.deserializationKey(s);
+				if (deserializationKey.startsWith(`${this.prefix}:${key}`)) {
+					this.storage.removeItem(s);
+				}
+			}
+		} else if (!isGroupNULL && !isKeyNUll) {
+			for (let i = 0; i < this.storage.length; ++i) {
+				const s: string | null = this.storage.key(i);
+				if (s === null) continue;
+				const deserializationKey: string = this.message.deserialization.deserializationKey(s);
+				if (deserializationKey.startsWith(`${this.prefix}:${key}&${group}`)) {
+					this.storage.removeItem(s);
+				}
+			}
+		} else {
+			console.log("error clear group");
 		}
 	}
 }

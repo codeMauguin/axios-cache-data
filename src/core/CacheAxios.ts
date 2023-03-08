@@ -108,6 +108,7 @@ abstract class Cache {
 		return config
 			? this.defaultOptions.generateKey(
 					this.defaultOptions.key,
+					config?.group ?? "DEFAULT_GROUP",
 					config.url,
 					config.method,
 					config.headers,

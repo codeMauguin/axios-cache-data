@@ -22,6 +22,7 @@ const ThreeProxy: CacheProxy<any> = function (
 			const url = argArray[0];
 			const generateKey = options.generateKey(
 				options.key,
+				argArray[2]?.group ?? "DEFAULT_GROUP",
 				argArray[0],
 				method,
 				argArray[2]?.header ?? null,
@@ -48,6 +49,7 @@ const TwoProxy: CacheProxy<any> = function (
 			const url = argArray[0];
 			const generateKey = options.generateKey(
 				options.key,
+				argArray[1]?.group ?? "DEFAULT_GROUP",
 				argArray[0],
 				key,
 				argArray[1]?.header,
@@ -75,6 +77,7 @@ const OneProxy: CacheProxy<any> = function (
 			const method = argArray[1].method ?? "get";
 			const generateKey: string = options.generateKey(
 				options.key,
+				argArray[0]?.group ?? "DEFAULT_GROUP",
 				argArray[0]?.url,
 				key,
 				argArray[0]?.header,

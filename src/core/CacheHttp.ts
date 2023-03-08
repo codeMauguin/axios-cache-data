@@ -18,6 +18,8 @@ declare module "axios" {
 		readonly force?: boolean;
 		readonly expire?: number;
 
+		group?: string | number;
+
 		valid?(response: AxiosResponse): boolean;
 	}
 }

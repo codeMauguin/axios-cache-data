@@ -9,6 +9,7 @@ const DEFAULT_METHOD: Method[] = ["get", "post"];
 
 function defaultGenerateKey(
 	key: string | undefined,
+	group: string | number,
 	url: string | undefined,
 	method: unknown,
 	header: unknown,
@@ -17,7 +18,9 @@ function defaultGenerateKey(
 ): string {
 	return btoa(
 		encodeURIComponent(
-			`${key}&${url}${method}&${JSON.stringify(header)}&${JSON.stringify(params)}-${JSON.stringify(data)}`
+			`${key}&${group}&${url}${method}&${JSON.stringify(header)}&${JSON.stringify(params)}-${JSON.stringify(
+				data
+			)}`
 		)
 	);
 }
