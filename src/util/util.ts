@@ -90,6 +90,12 @@ function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "a
 	};
 }
 
+function extendFn<T>(this: any, target: ((...args: any[]) => T) | undefined, options: { args: any[]; default: T }): T;
+function extendFn<T>(this: any, target: ((...args: any[]) => T) | undefined, options: { args: any[]; default: T }): T {
+	if (Object.is(target, null) || Object.is(target, void 0)) return options.default;
+	return Reflect.apply(<(...args: any[]) => T>target, this, options.args);
+}
+
 /**
  * 对参数可能是函数的类型执行
  * @param target 目标
@@ -106,7 +112,7 @@ function extend<T>(this: any, target: (...args: any[]) => T, ...args: any[]): T 
 
 function extend<T>(this: any, target: T | ((...args: any[]) => T), ...args: any[]): T | null;
 function extend<T>(this: any, target: T | ((...args: any[]) => T), ...args: any[]): T | null {
-	if (target === null || target === void 0) return null;
+	if (Object.is(target, null) || Object.is(target, void 0)) return null;
 	if (typeof target === "function") {
 		try {
 			return Reflect.apply(target, this, args);
@@ -117,4 +123,4 @@ function extend<T>(this: any, target: T | ((...args: any[]) => T), ...args: any[
 	return target;
 }
 
-export { createOptions, defaultGenerateKey, extend, createProxyMethods };
+export { createOptions, defaultGenerateKey, extend, createProxyMethods, extendFn };

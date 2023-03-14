@@ -1,6 +1,6 @@
 {
   "name": "axios-cache-data",
-  "version": "1.20.7",
+  "version": "1.20.8",
   "type": "module",
   "description": "自定义缓存数据，接口数据不会经常变化，请求本地化缓存减少服务器压力",
   "main": "./lib/index.min.js",

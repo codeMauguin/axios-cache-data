@@ -1,6 +1,6 @@
 import { HttpCache } from "@/cache";
 import { CacheInstance, RequestOption } from "@/type";
-import { extend } from "@/util/util";
+import { extend, extendFn } from "@/util/util";
 import { AxiosInstance } from "axios";
 
 function afterProxy(
@@ -9,7 +9,11 @@ function afterProxy(
 	config: RequestOption,
 	options: Omit<Required<CacheInstance>, "adapter"> & { cache: HttpCache }
 ): any {
-	if ((config.valid && config.valid(response)) || options.valid(response)) options.cache.set(key, response);
+	if (
+		extendFn(config.valid, { default: true, args: [response] }) &&
+		extendFn(options.valid, { default: true, args: [response] })
+	)
+		options.cache.set(key, response);
 	return response;
 }
 
@@ -37,9 +41,6 @@ function getResponse(
 		return Promise.resolve(Reflect.apply(target, thisArg, argArray)).then((resp) =>
 			afterProxy(resp, generateKey, requestOption, options)
 		);
-	}
-	if (process.env.NODE_ENV !== "production") {
-		console.info(`${generateKey}命中缓存`);
 	}
 	return Promise.resolve(response);
 }
