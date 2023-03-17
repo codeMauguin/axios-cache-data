@@ -1,9 +1,11 @@
 /** @format */
 
 import { CacheMessage, Deserialization, Serialization } from "@/cache";
+
 function isNull(target: any): boolean {
 	return Object.is(target, void 0) || Object.is(target, null);
 }
+
 export abstract class HttpCacheLike {
 	protected storage: Storage;
 	protected readonly prefix: string;
@@ -61,13 +63,17 @@ export class HttpCache extends HttpCacheLike {
 	}
 
 	public set(key: string, axiosPromise: object): void {
-		this.storage.setItem(
-			this.message.serialization.serializationKey(`${this.prefix}:${key}`),
-			this.message.serialization.serialization({
-				value: axiosPromise,
-				expire: new Date().getTime()
-			})
-		);
+		try {
+			this.storage.setItem(
+				this.message.serialization.serializationKey(`${this.prefix}:${key}`),
+				this.message.serialization.serialization({
+					value: axiosPromise,
+					expire: new Date().getTime()
+				})
+			);
+		} catch (e) {
+			//删除旧的键
+		}
 	}
 
 	/**

@@ -1,5 +1,6 @@
 import { HttpCache } from "@/cache/HttpCache";
 import { DeserializationMessageImpl, SerializationMessageImpl } from "@/cache/HttpCacheMessage";
+import { LRUCacheSessionStorage } from "@/cache/LRUCache";
 import { OneProxy, ThreeProxy, TwoProxy } from "@/core";
 import { CacheInstance, Method } from "@/type";
 import { RequestExecute } from "@/type/ExecuteType";
@@ -65,7 +66,7 @@ function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "a
 	const {
 		maxAge = 1000 * 60 * 60,
 		key = "HTTP_CACHE_CACHE",
-		storage = window.sessionStorage,
+		storage = new LRUCacheSessionStorage(),
 		prefix = "AXIOS-CACHE",
 		enableCache = false,
 		generateKey = defaultGenerateKey,
@@ -91,8 +92,17 @@ function createOptions(options: CacheInstance): Omit<Required<CacheInstance>, "a
 }
 
 function extendFn<T>(this: any, target: ((...args: any[]) => T) | undefined, options: { args: any[]; default: T }): T;
+/**
+ * ExtendFn 接受一个目标函数和一个选项对象。目标函数接受任意数量的参数并返回 T。options 对象有一个 args 属性，它是一个任意数组和一个 default 属性，它是一个 T。该函数返回一个 T。
+ *
+ * @param {any}  - 这个：任何
+ * @param {((...args: any[]) => T) | undefined} target - ((...args: any[]) => T) |不明确的
+ * @param options - { 参数：任何[]；默认值：T}
+ * @returns 如果对象是空返回默认设置值。否则执行对象并返回运行结果
+ */
 function extendFn<T>(this: any, target: ((...args: any[]) => T) | undefined, options: { args: any[]; default: T }): T {
 	if (Object.is(target, null) || Object.is(target, void 0)) return options.default;
+	/* 接受目标和选项对象的函数。 target 是一个函数，它接受任意数量的参数并返回一个 T。options 对象有一个 args 属性，它是一个 any 数组和一个 default 属性，它是一个 T。该函数返回一个 T。 */
 	return Reflect.apply(<(...args: any[]) => T>target, this, options.args);
 }
 

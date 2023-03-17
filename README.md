@@ -2,7 +2,7 @@
 
 # axios-cache-data
 
-![axios-data](https://badgen.net/badge/axios-cache-data/1.20.8/blue?icon=github)
+![axios-data](https://badgen.net/badge/axios-cache-data/1.20.9/blue?icon=github)
 ![axios](https://badgen.net/badge/axios/^1.2.2/green?icon=github) ![vite](https://badgen.net/badge/vite/^4.0.3/blue?icon=github)
 
 > `axios`官方文档在这 [axios](https://axios-http.com/)
